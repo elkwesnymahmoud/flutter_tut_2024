@@ -22,53 +22,48 @@ class ErrorHandler implements Exception {
   late Failure failure;
 
   ErrorHandler.handle(dynamic error) {
-    if (error is DioException ) {
+    if (error is DioException) {
       // dio error so its error from response of the API
-      failure = _handleError(error)!;
+      failure = _handleError(error);
     } else {
       // default error
       failure = DataSource.DEFAULT.getFailure();
     }
   }
 
-  Failure? _handleError(DioException  error) {
+  Failure _handleError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
         return DataSource.CONNECT_TIMEOUT.getFailure();
+
       case DioExceptionType.sendTimeout:
         return DataSource.SEND_TIMEOUT.getFailure();
+
       case DioExceptionType.receiveTimeout:
         return DataSource.RECEIVE_TIMEOUT.getFailure();
- 
-      case DioExceptionType.badResponse:
-        switch (error.response?.statusCode) {
-          case ResponseCode.BAD_REQUEST:
-            return DataSource.BAD_REQUEST.getFailure();
-          case ResponseCode.FORBIDDEN:
-            return DataSource.FORBIDDEN.getFailure();
-          case ResponseCode.UNAUTHORISED:
-            return DataSource.UNAUTHORISED.getFailure();
-          case ResponseCode.NOT_FOUND:
-            return DataSource.NOT_FOUND.getFailure();
-          case ResponseCode.INTERNAL_SERVER_ERROR:
-            return DataSource.INTERNAL_SERVER_ERROR.getFailure();
-          default:
-            return DataSource.DEFAULT.getFailure();
-        }
+
       case DioExceptionType.cancel:
         return DataSource.CANCEL.getFailure();
-      
+
       case DioExceptionType.badCertificate:
-        // TODO: Handle this case.
-        break;
+        return DataSource.CANCEL.getFailure();
+
       case DioExceptionType.connectionError:
-        // TODO: Handle this case.
-        break;
+        return DataSource.CANCEL.getFailure();
+
       case DioExceptionType.unknown:
-        // TODO: Handle this case.
-        break;
+        return DataSource.DEFAULT.getFailure();
+
+      case DioExceptionType.badResponse:
+        if (error.response != null &&
+            error.response?.statusCode != null &&
+            error.response?.statusMessage != null) {
+          return Failure(error.response?.statusCode ?? 0,
+              error.response?.statusMessage ?? '');
+        } else {
+          return DataSource.DEFAULT.getFailure();
+        }
     }
-    return null;
   }
 }
 
@@ -158,7 +153,7 @@ class ResponseMessage {
       "Please check your internet connection";
 }
 
-class ApiInternalStatus{
-  static const int  SUCCESS =0;
-  static const int  FAILURE =1;
+class ApiInternalStatus {
+  static const int SUCCESS = 0;
+  static const int FAILURE = 1;
 }

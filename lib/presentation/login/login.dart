@@ -34,14 +34,21 @@ class LoginViewState extends State<LoginView> {
         .addListener(() => _viewModel.setPassword(_passwordController.text));
 
     _viewModel.isUserLoggedInSuccessfullyStreamController.stream
-        .listen((isSuccessLoggedIn) {
-      // navigate to main screen
+        .listen((isLoggedIn) {
+          if(isLoggedIn){
+              // navigate to main screen
+        
+    
       SchedulerBinding.instance.addPostFrameCallback((_) {
         _appPreferences.setIsUserLoggedIn();
      
         
         Navigator.of(context).pushReplacementNamed(Routes.mainRoute);
-      });
+      }); 
+         
+          }
+
+
     });
   }
 

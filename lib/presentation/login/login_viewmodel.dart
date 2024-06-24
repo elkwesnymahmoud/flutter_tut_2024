@@ -24,6 +24,7 @@ class LoginViewModel extends BaseViewModel
   // inputs
   @override
   void dispose() {
+    super.dispose();
     _userNameStreamController.close();
     _isAllInputsValidStreamController.close();
     _passwordStreamController.close();
@@ -135,7 +136,7 @@ mixin   LoginViewModelInputs {
   Sink get inputIsAllInputValid;
 }
 
-mixin  LoginViewModelOutputs {
+mixin  LoginViewModelOutputs{
   Stream<bool> get outputIsUserNameValid;
 
   Stream<bool> get outputIsPasswordValid;

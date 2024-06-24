@@ -17,7 +17,7 @@ class DioFactory {
 
   Future<Dio> getDio() async {
     Dio dio = Dio();
-    Duration timeOut = const Duration(minutes: 60*1000); // 1 min
+    Duration timeOut = const Duration(minutes: 60 * 1000); // 1 min
     String language = await _appPreferences.getAppLanguage();
     Map<String, String> headers = {
       CONTENT_TYPE: APPLICATION_JSON,
@@ -32,11 +32,15 @@ class DioFactory {
         receiveTimeout: timeOut,
         headers: headers);
 
-    if (kReleaseMode) {
-      print("release mode no logs");
-    } else {
-      dio.interceptors.add(PrettyDioLogger(
-          requestHeader: true, requestBody: true, responseHeader: true));
+    if (!kReleaseMode)  {
+      // its debug mode so print all logs .
+      dio.interceptors.add(
+        PrettyDioLogger(
+          requestHeader: true,
+          requestBody: true,
+          responseHeader: true,
+        ),
+      );
     }
 
     return dio;
